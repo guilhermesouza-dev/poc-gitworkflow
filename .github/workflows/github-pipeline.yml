@@ -19,5 +19,17 @@ jobs:
         dotnet-version: 3.1.301
     - name: Build
       run: dotnet build --configuration Release
+    
     - name: Publish
       run: dotnet publish -c Release -o app
+      
+    - name: Azure Login
+      uses: Azure/login@v1.1
+      with:
+        # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Deployment no Azure App Service
+      uses: Azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.WEB_APP }} 
+        package: './app'
