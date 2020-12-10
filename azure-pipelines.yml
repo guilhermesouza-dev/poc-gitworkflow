@@ -24,4 +24,4 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az --version
-      az webapp config show --name "dev-gitflow" -g "dev-app-service" --query "virtualApplications" -o json
+      az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications" -o json
