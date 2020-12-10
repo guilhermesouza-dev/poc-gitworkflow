@@ -13,9 +13,16 @@ steps:
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
-    scriptType: 'bash'
+    scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
       az --version
-      $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications" -o json)
+      $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications") | ConvertFrom-Json
+      $jsonContent = [PSCustomObject]@{
+        "physicalPath" = "site\wwwroot\v2"
+        "preloadEnabled" = 'False'
+        "virtualDirectories" = ''
+        "virtualPath" = "/v2" 
+      }  
+      $virtualApplications += $jsonContent
       $virtualApplications
