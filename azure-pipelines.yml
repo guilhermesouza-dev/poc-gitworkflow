@@ -18,3 +18,4 @@ steps:
     inlineScript: |
       az --version
       $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications" -o json)
+      $virtualApplications
