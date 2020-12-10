@@ -22,12 +22,6 @@ steps:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az --version' 
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
-    appType: 'webApp'
-    WebAppName: 'dev-gitworkflow'
-    VirtualApplication: '/develop'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    inlineScript: |
+      az --version
+      az webapp config show --name "dev-gitflow" -g "dev-app-service" --query "virtualApplications" -o json
