@@ -20,9 +20,11 @@ steps:
       $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications") | ConvertFrom-Json
       $jsonContent = [PSCustomObject]@{
         "physicalPath" = "site\wwwroot\v2"
-        "preloadEnabled" = 'False'
-        "virtualDirectories" = ''
+        "preloadEnabled" = $false
+        "virtualDirectories" = $null
         "virtualPath" = "/v2" 
       }  
       $virtualApplications += $jsonContent
-      $virtualApplications
+      $virtualApplications = $virtualApplications | ConvertTo-Json
+      $jsonFile = '{{"virtualApplications": {0} }}' -f $virtualApplications
+      $jsonFile
