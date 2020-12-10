@@ -10,13 +10,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- script: |
-    dotnet build --configuration Release    
-  displayName: 'Build'
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
@@ -24,4 +17,4 @@ steps:
     scriptLocation: 'inlineScript'
     inlineScript: |
       az --version
-      az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications" -o json
+      $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications" -o json)
