@@ -20,10 +20,9 @@ steps:
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
-    scriptType: 'batch'
+    scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az webapp config show --name "dev-gitflow" -g "dev-app-service" --query "virtualApplications" -o json'
-    useGlobalConfig: true
+    inlineScript: 'az --version' 
 - task: AzureRmWebAppDeployment@4
   inputs:
     ConnectionType: 'AzureRM'
