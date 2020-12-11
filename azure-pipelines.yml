@@ -10,7 +10,13 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
+  
+variables:
+  # we can't use Build.SourceVersionMessage up here because it's not defined when the variables is set here
 
+  isMaster: ${{eq(variables['Build.SourceBranch'], 'refs/heads/master')}}  
+  isRelease: ${{startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')}}
+  releaseMessagePrefix: "release:"
 steps:
 - task: Bash@3
   inputs:
