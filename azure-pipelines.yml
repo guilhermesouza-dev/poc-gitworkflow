@@ -21,7 +21,7 @@ steps:
     targetType: 'inline'
     script: |
       $latestVersion = git tag --sort=v:refname | Select-Object -Last 1      
-      Write-Host "##vso[task.setvariable variable=LATEST_VERSION;]$latestVersion"
+      Write-Host "##vso[task.setvariable variable=SAUCE_USERNAME;]$latestVersion"
 
 - task: AzureCLI@2
   displayName: If necessary create virtual path to new version.
@@ -43,9 +43,24 @@ steps:
         $virtualApplications += $jsonContent
         $virtualApplications = $virtualApplications | ConvertTo-Json
         $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
-        $jsonFile
+        az webapp config set --name dev-gitworkflow --resource-group dev-app-service --generic-configurations $jsonFile
       }else{
-        echo 2
-        $Env:LATEST_VERSION
-        $latestVersion		
+        echo 'Virtual path to version already exists'
       }
+- script: |
+    dotnet build --configuration Release    
+  displayName: 'Build Project'
+- task: DotNetCoreCLI@2
+  displayName: 'Generate files to publish Project'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+- task: AzureRmWebAppDeployment@4
+  displayName: 'Publish into Azure Web Service'
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
+    appType: 'webApp'
+    WebAppName: 'dev-gitworkflow'
+    VirtualApplication: '/$Env:LATEST_VERSION'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
