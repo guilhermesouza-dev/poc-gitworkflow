@@ -32,6 +32,19 @@ steps:
         $virtualApplications = $virtualApplications | ConvertTo-Json
         $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
         az webapp config set --name dev-gitworkflow --resource-group dev-app-service --generic-configurations $jsonFile
-      }else {
-        echo 2
-      }
+      }      
+- script: |
+    dotnet build --configuration Release    
+  displayName: 'Build'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+- task: AzureRmWebAppDeployment@4
+  inputs:
+    ConnectionType: 'AzureRM'
+    azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
+    appType: 'webApp'
+    WebAppName: 'dev-gitworkflow'
+    VirtualApplication: '/v15.0'
+    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
