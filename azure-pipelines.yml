@@ -18,7 +18,14 @@ variables:
   isRelease: ${{startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')}}
   releaseMessagePrefix: "release:"
 steps:
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: 'echo $(Build.SourceVersionMessage) '
+- script: date /t
+  displayName: Get the date
+- script: dir
+  workingDirectory: $(Agent.BuildDirectory)
+  displayName: List contents of a folder
+- script: |
+    set MYVAR=foo
+    set
+  displayName: Set a variable and then display all
+  env:
+    aVarFromYaml: someValue
