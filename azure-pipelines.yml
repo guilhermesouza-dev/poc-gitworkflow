@@ -12,7 +12,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  SAUCE_USERNAME: '**/*.sln'
+  LATEST_VERSION: ''
 
 steps:
 - task: PowerShell@2
@@ -21,7 +21,7 @@ steps:
     targetType: 'inline'
     script: |
       $latestVersion = git tag --sort=v:refname | Select-Object -Last 1      
-      Write-Host "##vso[task.setvariable variable=SAUCE_USERNAME;]$latestVersion"
+      Write-Host "##vso[task.setvariable variable=LATEST_VERSION;]$latestVersion"
 
 - task: AzureCLI@2
   displayName: If necessary create virtual path to new version.
@@ -39,6 +39,6 @@ steps:
         $latestVersion		
       }else{
         echo 2
-        echo $Env:LATEST_VERSION
-        echo $latestVersion		
+        $Env:LATEST_VERSION
+        $latestVersion		
       }
