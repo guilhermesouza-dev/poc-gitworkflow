@@ -27,3 +27,4 @@ steps:
       $virtualApplications += $jsonContent
       $virtualApplications = $virtualApplications | ConvertTo-Json
       $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
+      $jsonFile
