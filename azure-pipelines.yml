@@ -23,31 +23,6 @@ steps:
       $latestVersion = git tag --sort=v:refname | Select-Object -Last 1      
       Write-Host "##vso[task.setvariable variable=LATEST_VERSION;]$latestVersion"
 
-- task: AzureCLI@2
-  displayName: If necessary create virtual path to new version.
-  inputs:
-    azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
-    scriptType: 'pscore'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications") | ConvertFrom-Json
-      $latestVersion = $Env:LATEST_VERSION
-      if(!($virtualApplications | ConvertTo-Json).Contains($latestVersion))
-      {
-        $jsonContent = [PSCustomObject]@{
-          "physicalPath" = "site\wwwroot\$latestVersion"
-          "preloadEnabled" = $false
-          "virtualDirectories" = $null
-          "virtualPath" = "/$latestVersion" 
-        }  
-        $virtualApplications += $jsonContent
-        $virtualApplications = $virtualApplications | ConvertTo-Json
-        $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
-        az webapp config set --name dev-gitworkflow --resource-group dev-app-service --generic-configurations $jsonFile
-      }else{
-        echo 'Virtual path to version already exists'
-        $latestVersion
-      }
 - script: |
     dotnet build --configuration Release    
   displayName: 'Build Project'
