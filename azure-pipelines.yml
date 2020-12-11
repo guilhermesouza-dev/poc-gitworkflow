@@ -16,16 +16,29 @@ variables:
 
 steps:
 - task: PowerShell@2
-  displayName: Add the username as an environment variable so the tests can find it.
+  displayName: Identify latest version.
   inputs:
     targetType: 'inline'
     script: |
       $latestVersion = git tag --sort=v:refname | Select-Object -Last 1      
       Write-Host "##vso[task.setvariable variable=SAUCE_USERNAME;]$latestVersion"
+
 - task: AzureCLI@2
+  displayName: If necessary create virtual path to new version.
   inputs:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      $Env:SAUCE_USERNAME
+      $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications") | ConvertFrom-Json
+      $latestVersion = $Env:LATEST_VERSION
+      if(!($latestVersion && ($virtualApplications | ConvertTo-Json).Contains($latestVersion)))
+      {
+        echo 1
+        $Env:LATEST_VERSION
+        $latestVersion		
+      }else{
+        echo 2
+        $Env:LATEST_VERSION
+        $latestVersion		
+      }
