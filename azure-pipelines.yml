@@ -62,5 +62,5 @@ steps:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
     appType: 'webApp'
     WebAppName: 'dev-gitworkflow'
-    VirtualApplication: '/$(Env:LATEST_VERSION)'
+    VirtualApplication: '/$(LATEST_VERSION)'
     packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
