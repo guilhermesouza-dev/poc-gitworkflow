@@ -32,4 +32,6 @@ steps:
       $virtualApplications = $virtualApplications | ConvertTo-Json
       $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
       az webapp config set --name dev-gitworkflow --resource-group dev-app-service --generic-configurations $jsonFile
+    }else {
+      echo 2
     }
