@@ -21,7 +21,8 @@ steps:
     targetType: 'inline'
     script: |
       $latestVersion = git tag --sort=v:refname | Select-Object -Last 1      
-      Write-Host '##vso[task.setvariable variable=SAUCE_USERNAME]$latestVersion'
+      Write-Host $latestVersion
+      Write-Host "##vso[task.setvariable variable=SAUCE_USERNAME;]$latestVersion"
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
