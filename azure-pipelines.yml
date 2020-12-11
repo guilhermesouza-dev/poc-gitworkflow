@@ -11,21 +11,21 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  # we can't use Build.SourceVersionMessage up here because it's not defined when the variables is set here
-
-  isMaster: ${{eq(variables['Build.SourceBranch'], 'refs/heads/master')}}  
-  isRelease: ${{startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')}}
-  releaseMessagePrefix: "release:"
 steps:
-- script: date /t
-  displayName: Get the date
-- script: dir
-  workingDirectory: $(Agent.BuildDirectory)
-  displayName: List contents of a folder
-- script: |
-    set MYVAR=foo
-    set
-  displayName: Set a variable and then display all
-  env:
-    aVarFromYaml: someValue
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      git tag --sort=v:refname | Select-Object -Last 1      
+      $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications") | ConvertFrom-Json
+      $jsonContent = [PSCustomObject]@{
+        "physicalPath" = "site\wwwroot\v3"
+        "preloadEnabled" = $false
+        "virtualDirectories" = $null
+        "virtualPath" = "/v3" 
+      }  
+      $virtualApplications += $jsonContent
+      $virtualApplications = $virtualApplications | ConvertTo-Json
+      $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
