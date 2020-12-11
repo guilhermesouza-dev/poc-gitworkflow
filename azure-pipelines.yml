@@ -51,12 +51,12 @@ steps:
     dotnet build --configuration Release    
   displayName: 'Build Project'
 - task: DotNetCoreCLI@2
-  displayName: 'Generate files to publish Project'
+  displayName: 'Generate files to publish the project'
   inputs:
     command: 'publish'
     publishWebProjects: true
 - task: AzureRmWebAppDeployment@4
-  displayName: 'Publish into Azure Web Service'
+  displayName: 'Publish project into Azure App Service'
   inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
