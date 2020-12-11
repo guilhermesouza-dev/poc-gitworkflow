@@ -21,7 +21,7 @@ steps:
     targetType: 'inline'
     script: |
       $latestVersion = git tag --sort=v:refname | Select-Object -Last 1      
-      Write-Host "##vso[task.setvariable variable=SAUCE_USERNAME;]$latestVersion"
+      Write-Host "##vso[task.setvariable variable=LATEST_VERSION;]$latestVersion"
 
 - task: AzureCLI@2
   displayName: If necessary create virtual path to new version.
@@ -46,6 +46,7 @@ steps:
         az webapp config set --name dev-gitworkflow --resource-group dev-app-service --generic-configurations $jsonFile
       }else{
         echo 'Virtual path to version already exists'
+        $latestVersion
       }
 - script: |
     dotnet build --configuration Release    
