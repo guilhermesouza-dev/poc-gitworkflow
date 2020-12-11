@@ -10,7 +10,7 @@ trigger:
 
 pool:
   vmImage: 'ubuntu-latest'
-  
+
 variables:
   # we can't use Build.SourceVersionMessage up here because it's not defined when the variables is set here
 
@@ -21,4 +21,4 @@ steps:
 - task: Bash@3
   inputs:
     targetType: 'inline'
-    script: 'echo ''##vso[task.setvariable variable=commitMessage]$(Build.SourceVersionMessage)'''
+    script: 'echo ''Olá'' '
