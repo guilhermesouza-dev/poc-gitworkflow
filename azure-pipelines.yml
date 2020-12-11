@@ -34,9 +34,16 @@ steps:
       $latestVersion = $Env:LATEST_VERSION
       if(!($virtualApplications | ConvertTo-Json).Contains($latestVersion))
       {
-        echo 1
-        $Env:LATEST_VERSION
-        $latestVersion		
+        $jsonContent = [PSCustomObject]@{
+          "physicalPath" = "site\wwwroot\$latestVersion"
+          "preloadEnabled" = $false
+          "virtualDirectories" = $null
+          "virtualPath" = "/$latestVersion" 
+        }  
+        $virtualApplications += $jsonContent
+        $virtualApplications = $virtualApplications | ConvertTo-Json
+        $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
+        $jsonFile
       }else{
         echo 2
         $Env:LATEST_VERSION
