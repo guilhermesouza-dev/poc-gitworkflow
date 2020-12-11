@@ -12,14 +12,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- powershell: Write-Host "This is a script that could use $env:BRANCH_NAME"
-  env:
-    BRANCH_NAME: $(Build.SourceBranchName)
-- task: AzureCLI@2
+- task: Bash@3
   inputs:
-    azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
-    scriptType: 'pscore'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az --version
-      $env:BRANCH_NAME
+    targetType: 'inline'
+    script: 'echo ''##vso[task.setvariable variable=commitMessage]$(Build.SourceVersionMessage)'''
