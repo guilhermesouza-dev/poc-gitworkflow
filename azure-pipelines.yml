@@ -28,4 +28,4 @@ steps:
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      $SAUCE_USERNAME
+      $Env:SAUCE_USERNAME
