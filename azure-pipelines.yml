@@ -39,6 +39,6 @@ steps:
         $latestVersion		
       }else{
         echo 2
-        $Env:LATEST_VERSION
-        $latestVersion		
+        echo $Env:LATEST_VERSION
+        echo $latestVersion		
       }
