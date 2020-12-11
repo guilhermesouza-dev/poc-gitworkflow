@@ -11,40 +11,21 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
+variables:
+  SAUCE_USERNAME: '**/*.sln'
+
 steps:
+- task: PowerShell@2
+  displayName: Add the username as an environment variable so the tests can find it.
+  inputs:
+    targetType: 'inline'
+    script: |
+      Write-Host "Making the sauceUsername available as an environment variable."
+      Write-Host "##vso[task.setvariable variable=SAUCE_USERNAME;]git tag --sort=v:refname | Select-Object -Last 1"
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
     scriptType: 'pscore'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications") | ConvertFrom-Json
-      $latestVersion = git tag --sort=v:refname | Select-Object -Last 1
-      if(!($virtualApplications | ConvertTo-Json).Contains($latestVersion))
-      {
-        $jsonContent = [PSCustomObject]@{
-          "physicalPath" = "site\wwwroot\$latestVersion"
-          "preloadEnabled" = $false
-          "virtualDirectories" = $null
-          "virtualPath" = "/$latestVersion" 
-        }  
-        $virtualApplications += $jsonContent
-        $virtualApplications = $virtualApplications | ConvertTo-Json
-        $jsonFile = '"{{\"virtualApplications\": {0} }}"' -f $virtualApplications.Replace('"','\"')
-        az webapp config set --name dev-gitworkflow --resource-group dev-app-service --generic-configurations $jsonFile
-      }      
-- script: |
-    dotnet build --configuration Release    
-  displayName: 'Build'
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'Pay-As-You-Go(b79b0c4e-3053-4a3f-a956-d1989ee9698f)'
-    appType: 'webApp'
-    WebAppName: 'dev-gitworkflow'
-    VirtualApplication: '/v15.0'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+      $SAUCE_USERNAME
