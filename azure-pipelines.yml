@@ -32,7 +32,7 @@ steps:
     inlineScript: |
       $virtualApplications = (az webapp config show --name "dev-gitworkflow" -g "dev-app-service" --query "virtualApplications") | ConvertFrom-Json
       $latestVersion = $Env:LATEST_VERSION
-      if(!($latestVersion && ($virtualApplications | ConvertTo-Json).Contains($latestVersion)))
+      if(!($virtualApplications | ConvertTo-Json).Contains($latestVersion))
       {
         echo 1
         $Env:LATEST_VERSION
